@@ -76,18 +76,6 @@ header {
     border-bottom: 1px dashed var(--border);
 }
 
-/* --- PHOTO DE PROFIL --- */
-.profile-photo {
-    /* width et height sont aussi gérés dans le HTML par sécurité */
-    width: 150px;
-    height: 150px;
-    border-radius: 50%; /* Rond parfait */
-    object-fit: cover;
-    border: 2px solid var(--accent);
-    margin-bottom: 25px;
-    display: block;
-    margin-left: 0; 
-}
 
 h1 {
     font-size: 2.5rem;
