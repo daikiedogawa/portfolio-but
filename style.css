@@ -1,12 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap');
 
 :root {
-    /* Couleurs style "Moniteur Technique" */
-    --bg-color: #0d1117;       /* Noir bleuté */
-    --text-primary: #e6edf3;   /* Blanc cassé */
-    --text-dim: #7d8590;       /* Gris commentaire */
-    --accent: #d2a8ff;         /* Violet électrique */
-    --border: #30363d;         /* Gris foncé pour les lignes */
+    --bg-color: #0d1117;       
+    --text-primary: #e6edf3;  
+    --text-dim: #7d8590;       
+    --accent: #d2a8ff;        
+    --border: #30363d;       
     --grid-line: rgba(48, 54, 61, 0.4); 
 }
 
@@ -198,6 +197,5 @@ footer {
     .grid-2 { display: block; }
     .card { border-right: none; border-bottom: 1px solid var(--border); }
     nav a { padding: 15px 10px; font-size: 0.8rem; }
-    .profile-photo { margin: 0 auto 20px auto; } /* Centre la photo sur mobile */
     header { text-align: center; } /* Centre le header sur mobile */
 }
