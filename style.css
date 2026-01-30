@@ -76,8 +76,9 @@ header {
     border-bottom: 1px dashed var(--border);
 }
 
-/* --- PHOTO DE PROFIL (Code ajouté) --- */
+/* --- PHOTO DE PROFIL --- */
 .profile-photo {
+    /* width et height sont aussi gérés dans le HTML par sécurité */
     width: 150px;
     height: 150px;
     border-radius: 50%; /* Rond parfait */
@@ -209,6 +210,6 @@ footer {
     .grid-2 { display: block; }
     .card { border-right: none; border-bottom: 1px solid var(--border); }
     nav a { padding: 15px 10px; font-size: 0.8rem; }
-    .profile-photo { margin: 0 auto 20px auto; } 
-    header { text-align: center; } 
+    .profile-photo { margin: 0 auto 20px auto; } /* Centre la photo sur mobile */
+    header { text-align: center; } /* Centre le header sur mobile */
 }
