@@ -12,12 +12,12 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Fira Code', 'Courier New', monospace; /* Police 100% code */
+    font-family: 'Fira Code', 'Courier New', monospace;
     background-color: var(--bg-color);
     color: var(--text-primary);
     line-height: 1.5;
     
-    /* Génération d'un papier millimétré en CSS pur */
+ 
     background-image: 
         linear-gradient(var(--grid-line) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
@@ -25,7 +25,6 @@ body {
     background-position: center top;
 }
 
-/* --- NAVIGATION STYLE "ONGLETS" --- */
 nav {
     display: flex;
     justify-content: center;
@@ -105,7 +104,7 @@ p {
     max-width: 65ch;
 }
 
-/* --- CARTES & GRID --- */
+
 .grid-2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -144,7 +143,7 @@ p {
     color: var(--text-dim);
 }
 
-/* --- BOUTON CV --- */
+
 .btn-primary {
     display: inline-block;
     background: transparent;
