@@ -5,7 +5,7 @@
 <title>Daiki Nael - Portfolio</title>
 <link rel="stylesheet" href="style.css">
 <style>
-  canvas {
+  canvas#bg {
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
@@ -17,11 +17,52 @@
     position: relative;
     z-index: 10;
   }
+
+  #mascot-wrapper {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 220px;
+    z-index: 20;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  #bubble {
+    position: absolute;
+    background: #1a1a2e;
+    border: 1.5px solid #d2a8ff;
+    color: #e6edf3;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    max-width: 220px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  #bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    border: 4px solid transparent;
+    border-top-color: #d2a8ff;
+  }
 </style>
 </head>
 <body>
 
 <canvas id="bg"></canvas>
+
+<div id="mascot-wrapper">
+  <div id="bubble"></div>
+  <canvas id="mascot" width="2000" height="220"></canvas>
+</div>
 
 <nav>
   <a href="index.html" class="active">/root</a>
@@ -80,89 +121,255 @@
 <footer>Daiki Nael - Portfolio</footer>
 
 <script>
-const canvas = document.getElementById('bg');
-const ctx = canvas.getContext('2d');
+  // --- Cubes background ---
+  const bgCanvas = document.getElementById('bg');
+  const bgCtx = bgCanvas.getContext('2d');
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize);
+  function resizeBg() {
+    bgCanvas.width = window.innerWidth;
+    bgCanvas.height = window.innerHeight;
+  }
+  resizeBg();
+  window.addEventListener('resize', resizeBg);
 
-function project(x, y, z, cx, cy, fov) {
-  const scale = fov / (fov + z);
-  return { x: cx + x * scale, y: cy + y * scale, scale };
-}
+  function project(x, y, z, cx, cy, fov) {
+    const scale = fov / (fov + z);
+    return { x: cx + x * scale, y: cy + y * scale };
+  }
 
-function getCubeVertices(cx, cy, cz, size) {
-  const h = size / 2;
-  return [
-    [-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],
-    [-h,-h, h],[h,-h, h],[h,h, h],[-h,h, h]
-  ].map(([x,y,z]) => [x+cx, y+cy, z+cz]);
-}
+  function getCubeVertices(cx, cy, cz, size) {
+    const h = size / 2;
+    return [
+      [-h,-h,-h],[h,-h,-h],[h,h,-h],[-h,h,-h],
+      [-h,-h,h],[h,-h,h],[h,h,h],[-h,h,h]
+    ].map(([x,y,z]) => [x+cx, y+cy, z+cz]);
+  }
 
-const edges = [
-  [0,1],[1,2],[2,3],[3,0],
-  [4,5],[5,6],[6,7],[7,4],
-  [0,4],[1,5],[2,6],[3,7]
-];
+  const edges = [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
 
-function rotateX(verts, angle) {
-  const c = Math.cos(angle), s = Math.sin(angle);
-  return verts.map(([x,y,z]) => [x, y*c - z*s, y*s + z*c]);
-}
-function rotateY(verts, angle) {
-  const c = Math.cos(angle), s = Math.sin(angle);
-  return verts.map(([x,y,z]) => [x*c + z*s, y, -x*s + z*c]);
-}
+  function rotateX(verts, angle) {
+    const c = Math.cos(angle), s = Math.sin(angle);
+    return verts.map(([x,y,z]) => [x, y*c - z*s, y*s + z*c]);
+  }
+  function rotateY(verts, angle) {
+    const c = Math.cos(angle), s = Math.sin(angle);
+    return verts.map(([x,y,z]) => [x*c + z*s, y, -x*s + z*c]);
+  }
 
-const cubes = Array.from({ length: 18 }, () => ({
-  x: (Math.random() - 0.5) * window.innerWidth * 1.4,
-  y: (Math.random() - 0.5) * window.innerHeight * 1.4,
-  z: Math.random() * 400 - 200,
-  size: 28 + Math.random() * 52,
-  rx: Math.random() * Math.PI * 2,
-  ry: Math.random() * Math.PI * 2,
-  vrx: (Math.random() - 0.5) * 0.008,
-  vry: (Math.random() - 0.5) * 0.008,
-  alpha: 0.06 + Math.random() * 0.1,
-  color: Math.random() > 0.5 ? '#d2a8ff' : '#79c0ff'
-}));
+  const cubes = Array.from({ length: 18 }, () => ({
+    x: (Math.random() - 0.5) * window.innerWidth * 1.4,
+    y: (Math.random() - 0.5) * window.innerHeight * 1.4,
+    z: Math.random() * 400 - 200,
+    size: 28 + Math.random() * 52,
+    rx: Math.random() * Math.PI * 2,
+    ry: Math.random() * Math.PI * 2,
+    vrx: (Math.random() - 0.5) * 0.008,
+    vry: (Math.random() - 0.5) * 0.008,
+    alpha: 0.06 + Math.random() * 0.1,
+    color: Math.random() > 0.5 ? '#d2a8ff' : '#79c0ff'
+  }));
 
-function drawCube(cube, cx, cy) {
-  let verts = getCubeVertices(cube.x, cube.y, cube.z, cube.size);
-  verts = rotateX(verts, cube.rx);
-  verts = rotateY(verts, cube.ry);
+  function drawCube(cube, cx, cy) {
+    let verts = getCubeVertices(cube.x, cube.y, cube.z, cube.size);
+    verts = rotateX(verts, cube.rx);
+    verts = rotateY(verts, cube.ry);
+    const proj = verts.map(([x,y,z]) => project(x, y, z, cx, cy, 600));
+    bgCtx.strokeStyle = cube.color;
+    bgCtx.globalAlpha = cube.alpha;
+    bgCtx.lineWidth = 0.8;
+    bgCtx.beginPath();
+    edges.forEach(([a, b]) => {
+      bgCtx.moveTo(proj[a].x, proj[a].y);
+      bgCtx.lineTo(proj[b].x, proj[b].y);
+    });
+    bgCtx.stroke();
+    bgCtx.globalAlpha = 1;
+  }
 
-  const proj = verts.map(([x,y,z]) => project(x, y, z, cx, cy, 600));
+  // --- Mascot ---
+  const mascotCanvas = document.getElementById('mascot');
+  const mCtx = mascotCanvas.getContext('2d');
+  const bubble = document.getElementById('bubble');
 
-  ctx.strokeStyle = cube.color;
-  ctx.globalAlpha = cube.alpha;
-  ctx.lineWidth = 0.8;
-  ctx.beginPath();
-  edges.forEach(([a, b]) => {
-    ctx.moveTo(proj[a].x, proj[a].y);
-    ctx.lineTo(proj[b].x, proj[b].y);
-  });
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-}
+  const compliments = [
+    "Portfolio propre, dev propre",
+    "Autodidacte ET en BUT ? Respect.",
+    "Le clean code c'est un etat d'esprit",
+    "T'as commence en Python, ca forge",
+    "Architecture > code spaghetti",
+    "Daiki Nael, futur dev serieux",
+  ];
 
-function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const cx = canvas.width / 2;
-  const cy = canvas.height / 2;
-  cubes.forEach(cube => {
-    cube.rx += cube.vrx;
-    cube.ry += cube.vry;
-    drawCube(cube, cx, cy);
-  });
-  requestAnimationFrame(animate);
-}
+  let mx = -60;
+  let mFrame = 0;
+  let mStep = 0;
+  let complimentIdx = 0;
+  let bubbleTimer = 0;
 
-animate();
+  function updateMascotCanvasWidth() {
+    mascotCanvas.width = window.innerWidth;
+  }
+  updateMascotCanvasWidth();
+  window.addEventListener('resize', updateMascotCanvasWidth);
+
+  function showNextCompliment() {
+    const text = compliments[complimentIdx % compliments.length];
+    complimentIdx++;
+    bubble.textContent = text;
+    bubble.style.opacity = '1';
+    const bx = Math.min(mx + 10, window.innerWidth - 240);
+    bubble.style.left = Math.max(10, bx) + 'px';
+    bubble.style.bottom = '120px';
+    bubbleTimer = 130;
+  }
+
+  function drawGuy(x, frame) {
+    const ground = 175;
+    const skinColor = '#c68642';
+    const hairColor = '#1a0a00';
+    const clothColor = '#111111';
+
+    const walkCycle = Math.sin(frame * 0.18);
+    const legSwing = walkCycle * 18;
+    const armSwing = -walkCycle * 18;
+    const bodyBob = Math.abs(Math.sin(frame * 0.18)) * 3;
+
+    mCtx.save();
+
+    const headY = ground - 115 - bodyBob;
+
+    mCtx.beginPath();
+    mCtx.arc(x, headY, 22, 0, Math.PI * 2);
+    mCtx.fillStyle = skinColor;
+    mCtx.fill();
+
+    mCtx.save();
+    mCtx.beginPath();
+    mCtx.arc(x, headY - 10, 20, Math.PI, 0);
+    mCtx.fillStyle = hairColor;
+    mCtx.fill();
+    for (let i = -3; i <= 3; i++) {
+      mCtx.beginPath();
+      mCtx.arc(x + i * 5, headY - 26, 7, 0, Math.PI * 2);
+      mCtx.fillStyle = hairColor;
+      mCtx.fill();
+    }
+    mCtx.restore();
+
+    mCtx.beginPath();
+    mCtx.arc(x - 7, headY + 2, 3, 0, Math.PI * 2);
+    mCtx.fillStyle = '#2a1200';
+    mCtx.fill();
+    mCtx.beginPath();
+    mCtx.arc(x + 7, headY + 2, 3, 0, Math.PI * 2);
+    mCtx.fillStyle = '#2a1200';
+    mCtx.fill();
+
+    mCtx.beginPath();
+    mCtx.arc(x, headY + 10, 6, 0.1 * Math.PI, 0.9 * Math.PI);
+    mCtx.strokeStyle = '#7a3b10';
+    mCtx.lineWidth = 1.5;
+    mCtx.stroke();
+
+    const torsoTop = headY + 22;
+    const torsoBot = torsoTop + 55 - bodyBob;
+
+    mCtx.beginPath();
+    mCtx.roundRect(x - 18, torsoTop, 36, 55, 4);
+    mCtx.fillStyle = clothColor;
+    mCtx.fill();
+
+    mCtx.save();
+    mCtx.translate(x - 20, torsoTop + 10);
+    mCtx.rotate((armSwing * Math.PI) / 180);
+    mCtx.beginPath();
+    mCtx.roundRect(-5, 0, 10, 38, 4);
+    mCtx.fillStyle = clothColor;
+    mCtx.fill();
+    mCtx.beginPath();
+    mCtx.arc(0, 40, 7, 0, Math.PI * 2);
+    mCtx.fillStyle = skinColor;
+    mCtx.fill();
+    mCtx.restore();
+
+    mCtx.save();
+    mCtx.translate(x + 20, torsoTop + 10);
+    mCtx.rotate((-armSwing * Math.PI) / 180);
+    mCtx.beginPath();
+    mCtx.roundRect(-5, 0, 10, 38, 4);
+    mCtx.fillStyle = clothColor;
+    mCtx.fill();
+    mCtx.beginPath();
+    mCtx.arc(0, 40, 7, 0, Math.PI * 2);
+    mCtx.fillStyle = skinColor;
+    mCtx.fill();
+    mCtx.restore();
+
+    mCtx.save();
+    mCtx.translate(x - 10, torsoBot);
+    mCtx.rotate((legSwing * Math.PI) / 180);
+    mCtx.beginPath();
+    mCtx.roundRect(-8, 0, 16, 50, 4);
+    mCtx.fillStyle = '#1c1c1c';
+    mCtx.fill();
+    mCtx.beginPath();
+    mCtx.ellipse(0, 52, 10, 5, 0, 0, Math.PI * 2);
+    mCtx.fillStyle = '#222';
+    mCtx.fill();
+    mCtx.restore();
+
+    mCtx.save();
+    mCtx.translate(x + 10, torsoBot);
+    mCtx.rotate((-legSwing * Math.PI) / 180);
+    mCtx.beginPath();
+    mCtx.roundRect(-8, 0, 16, 50, 4);
+    mCtx.fillStyle = '#1c1c1c';
+    mCtx.fill();
+    mCtx.beginPath();
+    mCtx.ellipse(0, 52, 10, 5, 0, 0, Math.PI * 2);
+    mCtx.fillStyle = '#222';
+    mCtx.fill();
+    mCtx.restore();
+
+    mCtx.restore();
+  }
+
+  function loop() {
+    // cubes
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    const cx = bgCanvas.width / 2;
+    const cy = bgCanvas.height / 2;
+    cubes.forEach(cube => {
+      cube.rx += cube.vrx;
+      cube.ry += cube.vry;
+      drawCube(cube, cx, cy);
+    });
+
+    // mascot
+    mCtx.clearRect(0, 0, mascotCanvas.width, mascotCanvas.height);
+    mFrame++;
+    mx += 1.2;
+    if (mx > window.innerWidth + 60) {
+      mx = -60;
+      complimentIdx = 0;
+    }
+    mStep++;
+    if (mStep % 90 === 0) showNextCompliment();
+
+    if (bubbleTimer > 0) {
+      bubbleTimer--;
+      if (bubbleTimer === 0) bubble.style.opacity = '0';
+      else {
+        const bx = Math.min(mx + 10, window.innerWidth - 240);
+        bubble.style.left = Math.max(10, bx) + 'px';
+      }
+    }
+
+    drawGuy(mx, mFrame);
+    requestAnimationFrame(loop);
+  }
+
+  loop();
 </script>
 </body>
 </html>
