@@ -1,64 +1,343 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>Daiki Nael - Portfolio</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0d1117;
+            --bg2: #161b22;
+            --border: #21262d;
+            --text: #e6edf3;
+            --text2: #8b949e;
+            --accent: #d2a8ff;
+            --accent2: #79c0ff;
+            --tag-bg: #161b22;
+            --card-bg: #161b22;
+        }
+        :root[data-theme="light"] {
+            --bg: #ffffff;
+            --bg2: #f6f8fa;
+            --border: #d0d7de;
+            --text: #1f2328;
+            --text2: #656d76;
+            --accent: #8250df;
+            --accent2: #0969da;
+            --tag-bg: #eaeef2;
+            --card-bg: #ffffff;
+        }
+        :root[data-theme="color"] {
+            --bg: #0f0c29;
+            --bg2: #1a1040;
+            --border: #3d2d6e;
+            --text: #f0e6ff;
+            --text2: #b39ddb;
+            --accent: #f72585;
+            --accent2: #4cc9f0;
+            --tag-bg: #1a1040;
+            --card-bg: #1a1040;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+        }
+
+        nav {
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            color: var(--text2);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        nav a:hover, nav a.active { color: var(--accent); }
+
+        .theme-switcher {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .theme-btn:hover { transform: scale(1.15); }
+        .theme-btn.active { border-color: var(--accent); }
+        .theme-btn.dark  { background: #0d1117; }
+        .theme-btn.light { background: #ffffff; }
+        .theme-btn.color { background: linear-gradient(135deg, #f72585, #4cc9f0); }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .subtitle { font-size: 1.05rem; color: var(--accent); margin-bottom: 1.2rem; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+
+        .tag {
+            background: var(--tag-bg);
+            border: 1px solid var(--border);
+            color: var(--text2);
+            font-size: 0.8rem;
+            padding: 0.3rem 0.7rem;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 0.55rem 1.2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-primary:hover { background: var(--accent); color: var(--bg); }
+
+        h2 {
+            font-size: 1rem;
+            color: var(--accent2);
+            margin: 2.5rem 0 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        p { color: var(--text2); line-height: 1.75; font-size: 0.95rem; margin-bottom: 1rem; }
+        strong { color: var(--text); }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem 1.4rem;
+        }
+
+        .card h3 {
+            font-size: 0.85rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .card ul { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+        .card ul li { font-size: 0.88rem; color: var(--text2); }
+        .card ul li strong { color: var(--text); }
+
+        /* Stats section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2.5rem 0 0;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            display: block;
+        }
+
+        .stat-card .label {
+            font-size: 0.78rem;
+            color: var(--text2);
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Stack section */
+        .stack-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+
+        .stack-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.82rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stack-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .stack-dot.blue { background: var(--accent2); }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--border);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .grid-2, .stats { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; }
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html" class="active">/root</a>
-        <a href="projet.html">/projet-pro</a>
-        <a href="academique.html">/academique</a>
-        <a href="perso.html">/projets-perso</a>
-    </nav>
-    <div class="container">
-        <header>
-            <h1>Daiki Nael</h1>
-            <p style="margin: 0; font-size: 1.1rem; color: #d2a8ff;">Étudiant en BUT Informatique</p>
-            <div class="tags">
-                <span class="tag">Nantes</span>
-                <span class="tag">07 76 94 01 17</span>
-                <span class="tag">naeldaiki44@gmail.com</span>
-            </div>
-            <a href="cv.pdf" target="_blank" class="btn-primary">Télécharger mon CV</a>
-        </header>
 
-        <h2>// Profil</h2>
-        <p>
-            Actuellement en première année de <strong>BUT Informatique à l'IUT de Nantes</strong>,
-            j'ai commencé à programmer seul avant d'intégrer le BUT, principalement en Python
-            avec la création de petits jeux. C'est ce qui m'a donné les bases solides en
-            programmation orientée objet.
-        </p>
-        <p>
-            Depuis, mes intérêts se sont élargis vers l'architecture logicielle et le développement
-            d'applications. J'accorde beaucoup d'importance à la qualité du code : lisibilité,
-            maintenabilité, et respect des bonnes pratiques.
-        </p>
+<nav>
+    <a href="index.html" class="active">/root</a>
+    <a href="projet.html">/projet-pro</a>
+    <a href="academique.html">/academique</a>
+    <a href="perso.html">/projets-perso</a>
+    <div class="theme-switcher">
+        <button class="theme-btn dark active" onclick="setTheme('dark')" title="Dark"></button>
+        <button class="theme-btn light" onclick="setTheme('light')" title="Light"></button>
+        <button class="theme-btn color" onclick="setTheme('color')" title="Color"></button>
+    </div>
+</nav>
 
-        <h2>// Compétences & Langues</h2>
-        <div class="grid-2">
-            <div class="card">
-                <h3>Langues</h3>
-                <ul>
-                    <li><strong>Anglais :</strong> Niveau avancé (B2/C1)</li>
-                    <li><strong>Espagnol :</strong> Niveau intermédiaire</li>
-                    <li><strong>Arabe :</strong> Notions de base</li>
-                </ul>
-            </div>
-            <div class="card">
-                <h3>Aptitudes</h3>
-                <div class="tags">
-                    <span class="tag">Rigueur logique</span>
-                    <span class="tag">Autonomie</span>
-                    <span class="tag">Clean code</span>
-                    <span class="tag">Travail d'équipe</span>
-                </div>
-            </div>
+<div class="container">
+    <header>
+        <h1>Daiki Nael</h1>
+        <p class="subtitle">Étudiant en BUT Informatique</p>
+        <div class="tags">
+            <span class="tag">📍 Nantes</span>
+            <span class="tag">07 76 94 01 17</span>
+            <span class="tag">naeldaiki44@gmail.com</span>
+        </div>
+        <a href="cv.pdf" target="_blank" class="btn-primary">Télécharger mon CV</a>
+    </header>
+
+    <h2>// Profil</h2>
+    <p>
+        Actuellement en première année de <strong>BUT Informatique à l'IUT de Nantes</strong>,
+        j'ai commencé à programmer seul avant d'intégrer le BUT, principalement en Python
+        avec la création de petits jeux. C'est ce qui m'a donné les bases solides en
+        programmation orientée objet.
+    </p>
+    <p>
+        Depuis, mes intérêts se sont élargis vers l'architecture logicielle et le développement
+        d'applications. J'accorde beaucoup d'importance à la qualité du code : lisibilité,
+        maintenabilité, et respect des bonnes pratiques.
+    </p>
+
+    <div class="stats">
+        <div class="stat-card">
+            <span class="number">1+</span>
+            <span class="label">An de BUT</span>
+        </div>
+        <div class="stat-card">
+            <span class="number">3</span>
+            <span class="label">Langues parlées</span>
+        </div>
+        <div class="stat-card">
+            <span class="number">∞</span>
+            <span class="label">Lignes de code à venir</span>
         </div>
     </div>
 
-    <footer>Daiki Nael - Portfolio</footer>
+    <h2>// Stack technique</h2>
+    <div class="stack-grid">
+        <div class="stack-item"><span class="stack-dot"></span>Python</div>
+        <div class="stack-item"><span class="stack-dot"></span>Kotlin</div>
+        <div class="stack-item"><span class="stack-dot blue"></span>Java</div>
+        <div class="stack-item"><span class="stack-dot blue"></span>SQL</div>
+        <div class="stack-item"><span class="stack-dot"></span>HTML / CSS</div>
+        <div class="stack-item"><span class="stack-dot blue"></span>Git</div>
+        <div class="stack-item"><span class="stack-dot"></span>Linux</div>
+    </div>
+
+    <h2>// Compétences & Langues</h2>
+    <div class="grid-2">
+        <div class="card">
+            <h3>Langues</h3>
+            <ul>
+                <li><strong>Anglais :</strong> Niveau avancé (B2/C1)</li>
+                <li><strong>Espagnol :</strong> Niveau intermédiaire</li>
+                <li><strong>Arabe :</strong> Notions de base</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3>Aptitudes</h3>
+            <div class="tags">
+                <span class="tag">Rigueur logique</span>
+                <span class="tag">Autonomie</span>
+                <span class="tag">Clean code</span>
+                <span class="tag">Travail d'équipe</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>Daiki Nael - Portfolio</footer>
+
+<script>
+    function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector('.theme-btn.' + theme).classList.add('active');
+        localStorage.setItem('theme', theme);
+    }
+
+    const saved = localStorage.getItem('theme');
+    if (saved) setTheme(saved);
+</script>
 </body>
 </html>
